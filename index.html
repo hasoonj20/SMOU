@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سُمُوّ | SMOU</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a0e1c; /* العنابي */
+            --accent: #f2e9e1;  /* الكريمي */
+            --gold: #c5a059;    /* الذهبي */
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--accent);
+            margin: 0; padding: 0;
+            color: var(--primary);
+        }
+
+        header {
+            background-color: var(--primary);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--gold);
+        }
+        header h1 { color: var(--accent); margin: 0; font-size: 2.5rem; }
+        header h3 { color: var(--gold); font-weight: 300; margin-top: 10px; }
+
+        .products-grid {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            position: relative;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover { transform: translateY(-10px); }
+
+        /* حاوية الصورة */
+        .image-container {
+            width: 100%;
+            height: 250px;
+            background-color: #f9f9f9;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            cursor: zoom-in; /* لتوضيح أن الصورة قابلة للضغط */
+            transition: 0.3s;
+        }
+        
+        .image-container:hover { opacity: 0.9; }
+
+        .badge {
+            position: absolute; top: 15px; right: 15px;
+            background: var(--gold); color: var(--primary);
+            padding: 5px 15px; border-radius: 50px; font-weight: bold; font-size: 0.8rem;
+            z-index: 5;
+        }
+
+        .info { padding: 25px; text-align: center; }
+        .name { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        .price-box { background: #fdfaf7; padding: 10px; border-radius: 12px; margin-bottom: 20px; }
+        .price { color: var(--gold); font-weight: bold; font-size: 1.2rem; }
+
+        .add-btn {
+            background: var(--primary); color: white;
+            border: none; padding: 14px; border-radius: 10px;
+            width: 100%; cursor: pointer; font-family: 'Tajawal';
+            font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+
+        /* نافذة عرض الصورة المكبرة */
+        .img-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        .img-overlay img {
+            max-width: 90%;
+            max-height: 80%;
+            border: 3px solid var(--gold);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        /* تنسيقات السلة والمودال (نفس ستايلك السابق) */
+        .cart-float { position: fixed; bottom: 30px; left: 30px; background: var(--primary); color: var(--accent); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 20px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; }
+        .count { position: absolute; top: 0; right: 0; background: var(--gold); color: var(--primary); width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid var(--gold); }
+        .order-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #eee; }
+        .total-section { background: var(--accent); padding: 15px; border-radius: 12px; margin: 20px 0; display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); font-size: 1.2rem; }
+        .input-name { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: 'Tajawal'; }
+        .send-btn { background: var(--primary); color: white; border: none; padding: 16px; width: 100%; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>سُـمُـوّ</h1>
+    <h3>لكـل لحظـة سُمُـوّها</h3>
+</header>
+
+<div id="imgOverlay" class="img-overlay" onclick="this.style.display='none'">
+    <img id="fullImg" src="" alt="عرض المنتج">
+    <p style="color: white; position: absolute; bottom: 20px;">إضغط في أي مكان للعودة</p>
+</div>
+
+<div class="cart-float" onclick="openCart()">
+    <i class="fas fa-shopping-basket"></i>
+    <span class="count" id="count">0</span>
+</div>
+
+<div class="products-grid">
+    
+    <div class="card">
+        <div class="badge">50غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/كشميري.webp');"
+             onclick="viewImage('المنتجات/كشميري.webp')">
+        </div>
+        <div class="info">
+            <div class="name">بخور كشميري</div>
+            <div class="price-box"><span class="price">2.500 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('بخور كشميري', 2.500)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="badge">50غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/حمدان.webp');"
+             onclick="viewImage('المنتجات/حمدان.webp')">
+        </div>
+        <div class="info">
+            <div class="name">بخور حمدان</div>
+            <div class="price-box"><span class="price">2.500 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('بخور حمدان', 2.500)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="badge">50غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/ملكي.webp');"
+             onclick="viewImage('المنتجات/ملكي.webp')">
+        </div>
+        <div class="info">
+            <div class="name">بخور ملكي</div>
+            <div class="price-box"><span class="price">2.500 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('بخور ملكي', 2.500)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>
+	
+	    <div class="card">
+        <div class="badge">50غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/عود البحرين.webp');"
+             onclick="viewImage('لمنتجات/عود البحرين.webp')">
+        </div>
+        <div class="info">
+            <div class="name">بخور عود البحرين</div>
+            <div class="price-box"><span class="price">2.500 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('بخور ملكي', 2.500)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>
+	
+		    <div class="card">
+        <div class="badge">20غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/لبان التوت.webp');"
+             onclick="viewImage('المنتجات/لبان التوت.webp')">
+        </div>
+        <div class="info">
+            <div class="name">لبان التوت</div>
+            <div class="price-box"><span class="price">1.000 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('لبان التوت', 1.000)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>
+	
+	    <div class="card">
+        <div class="badge">20غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/لبان شي عود .webp');"
+             onclick="viewImage('المنتجات/لبان شي عود .webp')">
+        </div>
+        <div class="info">
+            <div class="name">لبان شي عود</div>
+            <div class="price-box"><span class="price">1.000 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('لبان شي عود', 1.000)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>
+	
+		<div class="card">
+        <div class="badge">20غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/لبان لافندر.webp');"
+             onclick="viewImage('المنتجات/لبان لافندر.webp')">
+        </div>
+        <div class="info">
+            <div class="name">لبان لافندر</div>
+            <div class="price-box"><span class="price">1.000 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('لبان لافندر', 1.000)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>
+	
+		<div class="card">
+        <div class="badge">20غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/لبان مخلط اماراتي.webp');"
+             onclick="viewImage('المنتجات/لبان مخلط اماراتي.webp')">
+        </div>
+        <div class="info">
+            <div class="name">لبان مخلط اماراتي</div>
+            <div class="price-box"><span class="price">1.000 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('لبان مخلط اماراتي', 1.000)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>
+	
+		<div class="card">
+        <div class="badge">20غ</div>
+        <div class="image-container" 
+             style="background-image: url('المنتجات/لبان مشموم.webp');"
+             onclick="viewImage('المنتجات/لبان مشموم.webp')">
+        </div>
+        <div class="info">
+            <div class="name">لبان مشموم</div>
+            <div class="price-box"><span class="price">1.000 د.ب</span></div>
+            <button class="add-btn" onclick="addToCart('لبان مشموم', 1.000)">
+                <i class="fas fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    </div>	
+	
+</div>
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3 style="text-align:center; color:var(--primary); margin-top:0;">مراجعة طلبك</h3>
+        <div id="list"></div>
+        <div class="total-section"><span>الإجمالي:</span><span id="total"></span></div>
+        <input type="text" id="custName" class="input-name" placeholder="أدخل اسمك الكريم">
+        <button class="send-btn" onclick="confirmOrder()">إرسال الطلب <i class="fab fa-whatsapp"></i></button>
+        <button onclick="closeCart()" style="border:none; background:none; color:#999; width:100%; margin-top:15px; cursor:pointer;">إلغاء ومتابعة التسوق</button>
+    </div>
+</div>
+
+<script>
+    let cart = [];
+    const targetPhone = "97336024764";
+
+    // وظيفة تكبير الصورة
+    function viewImage(url) {
+        document.getElementById('fullImg').src = url;
+        document.getElementById('imgOverlay').style.display = 'flex';
+    }
+
+    function addToCart(n, p) {
+        cart.push({name: n, price: p});
+        document.getElementById('count').innerText = cart.length;
+        const btn = event.currentTarget;
+        btn.style.background = "#c5a059";
+        btn.innerHTML = "✓ تمت الإضافة";
+        setTimeout(() => {
+            btn.style.background = "#4a0e1c";
+            btn.innerHTML = '<i class="fas fa-cart-plus"></i> إضافة للسلة';
+        }, 800);
+    }
+
+    function openCart() {
+        if(cart.length == 0) return alert("السلة فارغة!");
+        let list = document.getElementById('list');
+        let total = 0;
+        list.innerHTML = "";
+        cart.forEach(item => {
+            list.innerHTML += `<div class="order-row"><span>${item.name}</span><span>${item.price.toFixed(3)} د.ب</span></div>`;
+            total += item.price;
+        });
+        document.getElementById('total').innerText = total.toFixed(3) + " د.ب";
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function closeCart() { document.getElementById('modal').style.display = 'none'; }
+
+function confirmOrder() {
+    let name = document.getElementById('custName').value;
+    if(!name) return alert("يرجى كتابة اسمك الكريم");
+    
+    // رأس الرسالة
+    let msg = `✨ *طلب من متجر سُمُوّ* ✨\n\n`;
+    msg += `👤 *العميل:* ${name}\n`;
+    msg += `━━━━━━━━━━━━━━━\n`;
+    msg += `📦 *المنتجات المطلوبة:*\n\n`;
+    
+    let total = 0;
+    // إذا كنت تستخدم نظام المصفوفة البسيط الخاص بك:
+    cart.forEach((item, index) => {
+        msg += `${index + 1}. *${item.name}*\n`;
+        msg += `   السعر: ${item.price.toFixed(3)} د.ب\n\n`;
+        total += item.price;
+    });
+
+    /* 
+    // ملاحظة: إذا كنت استخدمت نظام (الكميات) الذي اقترحته لك سابقاً، استخدم هذا الجزء بدلاً من المصفوفة:
+    for (let productName in cart) {
+        let itemTotal = cart[productName].price * cart[productName].qty;
+        msg += `• *${productName}*\n`;
+        msg += `  الكمية: ${cart[productName].qty} | السعر: ${itemTotal.toFixed(3)} د.ب\n`;
+        total += itemTotal;
+    }
+    */
+    
+    // تذييل الرسالة
+    msg += `\n━━━━━━━━━━━━━━━\n`;
+    msg += `💰 *إجمالي المبلغ: ${total.toFixed(3)} د.ب*\n\n`;
+
+    // فتح الرابط
+    window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    closeCart();
+}
+</script>
+
+</body>
+</html>
