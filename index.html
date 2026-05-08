@@ -124,8 +124,36 @@
         .cart-float { position: fixed; bottom: 30px; left: 30px; background: var(--primary); color: var(--accent); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 20px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; }
         .count { position: absolute; top: 0; right: 0; background: var(--gold); color: var(--primary); width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid var(--gold); }
-        .order-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #eee; }
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 450px;
+    border: 1px solid var(--gold);
+    
+    /* الحل هنا: تحديد أقصى ارتفاع وتفعيل التمرير */
+    max-height: 80vh; /* تأخذ 80% من طول الشاشة كحد أقصى */
+    display: flex;
+    flex-direction: column;
+}
+
+#list {
+    /* تجعل قائمة المنتجات هي التي تتحرك فقط */
+    overflow-y: auto; 
+    flex-grow: 1;
+    margin-bottom: 15px;
+    padding-left: 10px; /* مسافة بسيطة لشريط التمرير */
+}
+
+/* تحسين شكل شريط التمرير (إختياري) */
+#list::-webkit-scrollbar {
+    width: 5px;
+}
+#list::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 10px;
+}        .order-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #eee; }
         .total-section { background: var(--accent); padding: 15px; border-radius: 12px; margin: 20px 0; display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); font-size: 1.2rem; }
         .input-name { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: 'Tajawal'; }
         .send-btn { background: var(--primary); color: white; border: none; padding: 16px; width: 100%; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -295,56 +323,7 @@
         </div>
     </div>	
 
-    	<div class="card">
-        <div class="badge">50غ</div>
-        <div class="image-container" 
-             style="background-image: url('المنتجات/خصوصي.webp');"
-             onclick="viewImage('المنتجات/خصوصي.webp')">
-        </div>
-        <div class="info">
-            <div class="name">بخور خصوصي</div>
-            <div class="price-box"><span class="price">2.500 د.ب</span></div>
-            <button class="add-btn" onclick="addToCart('بخور خصوصي', 2.500)">
-                <i class="fas fa-cart-plus"></i> إضافة للسلة
-            </button>
-        </div>
-    </div>	
 
-        <div class="card">
-        <div class="badge">50غ</div>
-        <div class="image-container" 
-             style="background-image: url('المنتجات/سيوفي.webp');"
-             onclick="viewImage('المنتجات/سيوفي.webp')">
-        </div>
-        <div class="info">
-            <div class="name">بخور سيوفي</div>
-            <div class="price-box"><span class="price">2.500 د.ب</span></div>
-            <button class="add-btn" onclick="addToCart('بخور سيوفي', 2.500)">
-                <i class="fas fa-cart-plus"></i> إضافة للسلة
-            </button>
-        </div>
-    </div>
-
-<div class="card">
-        <div class="badge">80ح</div>
-        <div class="image-container" 
-             style="background-image: url('المنتجات/فحم.webp');"
-             onclick="viewImage('المنتجات/فحم.webp')">
-        </div>
-        <div class="info">
-            <div class="name">فحم</div>
-            <div class="price-box">
-                <!-- السعر القديم عليه خط -->
-                <span class="old-price">1.500 د.ب</span> 
-                <!-- السعر الجديد -->
-                <span class="price">1.300 د.ب</span>
-            </div>
-            <!-- تأكد من كتابة السعر الجديد هنا لكي يُحسب في السلة بشكل صحيح -->
-            <button class="add-btn" onclick="addToCart('فحم', 1.300, this)">
-                <i class="fas fa-cart-plus"></i> إضافة للسلة
-            </button>
-        </div>
-    </div>
 	
 </div>
 <div id="modal" class="modal">
